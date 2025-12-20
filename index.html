@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hybrid WebAR Prototype</title>
+    <script
+      type="module"
+      src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"
+    ></script>
+    <style>
+      body,
+      html {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+      model-viewer {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <model-viewer id="arModel" src="model.glb" <!-- Your downloaded GLB file -->
+      ar ar-modes="scene-viewer quick-look" camera-controls auto-rotate
+      ar-scale="fixed" placement="horizontal" >
+    </model-viewer>
+  </body>
+</html>
