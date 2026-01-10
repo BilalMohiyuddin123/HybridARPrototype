@@ -14,14 +14,42 @@
         margin: 0;
         height: 100%;
         overflow: hidden;
+        font-family: sans-serif;
       }
       model-viewer {
         width: 100%;
         height: 100%;
       }
+      /* Style for the model selection menu */
+      #controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 10px;
+        border-radius: 8px;
+      }
+      .model-btn {
+        padding: 8px 16px;
+        cursor: pointer;
+        border: 1px solid #ccc;
+        background: white;
+        border-radius: 4px;
+      }
+      .model-btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #0056b3;
+      }
     </style>
   </head>
   <body>
+    <div id="controls"></div>
+
     <model-viewer
       id="arModel"
       src="model.glb"
@@ -49,5 +77,38 @@
         👋 View in your space
       </button>
     </model-viewer>
+
+    <script>
+      // 2. THE ARRAY: This is where you manage your files
+      const modelList = [
+        { name: "Original", file: "model.glb" },
+        { name: "Blocks", file: "blocks.glb" },
+        // Add more here later
+      ];
+
+      const modelViewer = document.querySelector("#arModel");
+      const controls = document.querySelector("#controls");
+
+      // 3. GENERATE BUTTONS: This creates a button for every item in your array
+      modelList.forEach((item, index) => {
+        const button = document.createElement("button");
+        button.textContent = item.name;
+        button.classList.add("model-btn");
+        if (index === 0) button.classList.add("active"); // Highlight the first one
+
+        button.onclick = () => {
+          // Change the source of the model-viewer
+          modelViewer.src = item.file;
+
+          // Update button UI
+          document
+            .querySelectorAll(".model-btn")
+            .forEach((btn) => btn.classList.remove("active"));
+          button.classList.add("active");
+        };
+
+        controls.appendChild(button);
+      });
+    </script>
   </body>
 </html>
