@@ -14,42 +14,94 @@
         margin: 0;
         height: 100%;
         overflow: hidden;
-        font-family: sans-serif;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background-color: #f0f0f0;
       }
+
       model-viewer {
         width: 100%;
         height: 100%;
+        background-color: #eee;
       }
-      /* Style for the model selection menu */
+
+      /* --- IMPROVED SCROLLABLE CONTROLS --- */
       #controls {
         position: absolute;
-        bottom: 20px;
+        bottom: 30px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 10px;
+        gap: 12px;
         z-index: 10;
-        background: rgba(255, 255, 255, 0.8);
-        padding: 10px;
-        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px); /* Modern blur effect */
+        padding: 15px;
+        border-radius: 16px;
+        width: 85%; /* Constrain width to allow scrolling */
+        max-width: 600px;
+        overflow-x: auto; /* Enable horizontal scroll */
+        white-space: nowrap;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
       }
+
+      /* Hide scrollbar for a cleaner look */
+      #controls::-webkit-scrollbar {
+        display: none;
+      }
+      #controls {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
       .model-btn {
-        padding: 8px 16px;
+        padding: 10px 20px;
         cursor: pointer;
-        border: 1px solid #ccc;
+        border: 1px solid #ddd;
         background: white;
-        border-radius: 4px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        flex: 0 0 auto; /* Prevent buttons from shrinking */
       }
+
       .model-btn.active {
         background: #007bff;
         color: white;
-        border-color: #0056b3;
+        border-color: #007bff;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.4);
+      }
+
+      /* --- PROMINENT AR BUTTON --- */
+      #ar-button {
+        background-color: #000; /* High contrast black */
+        color: white;
+        border-radius: 30px; /* Pill shape */
+        border: none;
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%); /* Center it at the top */
+        padding: 14px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        z-index: 20;
+        cursor: pointer;
+      }
+
+      #ar-button:active {
+        background-color: #333;
       }
     </style>
   </head>
   <body>
-    <div id="controls"></div>
-
     <model-viewer
       id="arModel"
       src="model.glb"
@@ -62,26 +114,16 @@
       placement="floor"
       alt="A 3D model for AR"
     >
-      <button
-        slot="ar-button"
-        style="
-          background-color: white;
-          border-radius: 4px;
-          border: none;
-          position: absolute;
-          top: 16px;
-          right: 16px;
-          padding: 10px;
-        "
-      >
-        👋 View in your space
+      <button slot="ar-button" id="ar-button">
+        <span>✨</span> View in your space
       </button>
+
+      <div id="controls"></div>
     </model-viewer>
 
     <script>
-      // 2. THE ARRAY: This is where you manage your files
       const modelList = [
-        { name: "Orignal", file: "model.glb" },
+        { name: "Original", file: "model.glb" },
         { name: "Pizza", file: "pizza.glb" },
         { name: "Wrap", file: "wrap.glb" },
         { name: "Blocks", file: "blocks.glb" },
@@ -89,28 +131,30 @@
         { name: "Breakfast", file: "breakfast.glb" },
         { name: "Chair", file: "o2.glb" },
         { name: "Table", file: "o1.glb" },
-        // Add more here later
       ];
 
       const modelViewer = document.querySelector("#arModel");
       const controls = document.querySelector("#controls");
 
-      // 3. GENERATE BUTTONS: This creates a button for every item in your array
       modelList.forEach((item, index) => {
         const button = document.createElement("button");
         button.textContent = item.name;
         button.classList.add("model-btn");
-        if (index === 0) button.classList.add("active"); // Highlight the first one
+        if (index === 0) button.classList.add("active");
 
         button.onclick = () => {
-          // Change the source of the model-viewer
           modelViewer.src = item.file;
-
-          // Update button UI
           document
             .querySelectorAll(".model-btn")
             .forEach((btn) => btn.classList.remove("active"));
           button.classList.add("active");
+
+          // Smoothly scroll the button into view when clicked
+          button.scrollIntoView({
+            behavior: "smooth",
+            inline: "center",
+            block: "nearest",
+          });
         };
 
         controls.appendChild(button);
